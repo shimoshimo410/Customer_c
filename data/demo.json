@@ -1,0 +1,48 @@
+{
+  "owner": {
+    "name": "DEMO 様"
+  },
+  "collection": {
+    "title": "DEMO COLLECTION",
+    "welcome": "これはデモ表示です。購入者ごとの専用URLでご覧いただくと、あなた専用のコレクションが表示されます。",
+    "updated_at": "2026-04-19"
+  },
+  "cards": [
+    {
+      "id": "demo-001",
+      "name": "リザードンex SAR",
+      "set": "SV1a",
+      "number": "201/198",
+      "rarity": "SAR",
+      "front_image": "",
+      "psa": { "grade": 10, "cert_number": "12345678", "year": 2024 },
+      "notes": "デモ用ダミーデータ",
+      "acquired_at": "2024-06-15",
+      "added_at": "2026-04-19"
+    },
+    {
+      "id": "demo-002",
+      "name": "ピカチュウ プロモ",
+      "set": "プロモ",
+      "number": "001/PROMO",
+      "rarity": "PROMO",
+      "front_image": "",
+      "psa": { "grade": 9, "cert_number": "98765432", "year": 2024 },
+      "notes": "デモ用ダミーデータ",
+      "acquired_at": "2024-03-01",
+      "added_at": "2026-04-19"
+    },
+    {
+      "id": "demo-003",
+      "name": "ミュウツーV SA",
+      "set": "S12a",
+      "number": "220/172",
+      "rarity": "SA",
+      "front_image": "",
+      "psa": null,
+      "notes": "生カード。スリーブ+マグネットローダーで保管。",
+      "acquired_at": "2023-11-10",
+      "added_at": "2026-04-19"
+    }
+  ]
+}

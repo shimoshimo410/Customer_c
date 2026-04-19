@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shimo's Card Cabinet — あなた専用のコレクション</title>
+<meta name="description" content="ご購入ありがとうございました。あなた専用のカードキャビネットです。">
+<meta property="og:title" content="Shimo's Card Cabinet">
+<meta property="og:description" content="あなた専用のポケカコレクションビューワー">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,500;0,700;1,500&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --wood-dark: #2a1810;
+    --wood-mid: #4a2f1e;
+    --wood-light: #6b4530;
+    --wood-highlight: #8a5a3c;
+    --brass: #c8a558;
+    --brass-dark: #8a6f2a;
+    --cream: #f4ead5;
+    --paper: #ebe0c8;
+    --ink: #1a1208;
+    --psa-red: #c3002f;
+    --psa-gold: #d4af37;
+    --gem-blue: #1e3a8a;
+    --shadow-soft: 0 20px 40px -12px rgba(0,0,0,0.55);
+    --shadow-hard: 0 8px 20px -4px rgba(0,0,0,0.7);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    min-height: 100%;
+    font-family: 'Shippori Mincho', serif;
+    color: var(--cream);
+    background: var(--wood-dark);
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ====== 部屋の雰囲気 ====== */
+  .room {
+    min-height: 100vh;
+    position: relative;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% 0%, rgba(255, 220, 160, 0.15), transparent 70%),
+      radial-gradient(ellipse 60% 100% at 50% 100%, rgba(0,0,0,0.5), transparent 60%),
+      linear-gradient(180deg, #1a0e06 0%, #2a1810 40%, #1a0e06 100%);
+    padding: 48px 24px 120px;
+  }
+
+  /* 天井から降りる光 */
+  .room::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 60%;
+    height: 180px;
+    background: radial-gradient(ellipse at top, rgba(255, 210, 140, 0.22), transparent 70%);
+    pointer-events: none;
+  }
+
+  /* 浮遊する埃の粒子 */
+  .dust {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .dust span {
+    position: absolute;
+    width: 2px; height: 2px;
+    background: rgba(255, 220, 170, 0.6);
+    border-radius: 50%;
+    animation: float 18s linear infinite;
+  }
+  @keyframes float {
+    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-10vh) translateX(40px); opacity: 0; }
+  }
+
+  /* ====== ヘッダー / ネームプレート ====== */
+  header {
+    max-width: 1200px;
+    margin: 0 auto 56px;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+  }
+
+  .brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    letter-spacing: 0.3em;
+    color: var(--brass);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    opacity: 0.85;
+  }
+
+  .plate {
+    display: inline-block;
+    padding: 22px 56px;
+    background: linear-gradient(180deg, #d4b682 0%, #a68652 50%, #c8a558 100%);
+    border: 2px solid #5a4020;
+    border-radius: 4px;
+    box-shadow:
+      inset 0 2px 0 rgba(255,255,255,0.35),
+      inset 0 -2px 0 rgba(0,0,0,0.3),
+      0 6px 12px rgba(0,0,0,0.5);
+    position: relative;
+  }
+  .plate::before, .plate::after {
+    content: '';
+    position: absolute;
+    top: 8px;
+    width: 6px; height: 6px;
+    background: #3a2810;
+    border-radius: 50%;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.2);
+  }
+  .plate::before { left: 10px; }
+  .plate::after { right: 10px; }
+
+  .plate .for {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    color: #3a2810;
+    display: block;
+    margin-bottom: 4px;
+  }
+  .plate h1 {
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 900;
+    font-size: clamp(22px, 4vw, 32px);
+    color: #1a0e06;
+    letter-spacing: 0.08em;
+  }
+
+  .subtitle {
+    margin-top: 16px;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: rgba(244, 234, 213, 0.6);
+    letter-spacing: 0.08em;
+  }
+
+  .welcome {
+    max-width: 540px;
+    margin: 24px auto 0;
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(244, 234, 213, 0.7);
+  }
+
+  /* ====== ツールバー ====== */
+  .toolbar {
+    max-width: 1200px;
+    margin: 0 auto 32px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+  }
+  .chip {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.1em;
+    padding: 8px 18px;
+    background: rgba(244, 234, 213, 0.06);
+    border: 1px solid rgba(200, 165, 88, 0.3);
+    color: rgba(244, 234, 213, 0.75);
+    cursor: pointer;
+    transition: all 0.25s ease;
+    border-radius: 2px;
+  }
+  .chip:hover {
+    background: rgba(200, 165, 88, 0.15);
+    border-color: var(--brass);
+    color: var(--cream);
+  }
+  .chip.active {
+    background: var(--brass);
+    color: var(--wood-dark);
+    border-color: var(--brass);
+  }
+  .divider {
+    width: 1px; height: 20px;
+    background: rgba(200, 165, 88, 0.3);
+  }
+  .count {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--brass);
+    letter-spacing: 0.1em;
+  }
+
+  /* ====== 棚（キャビネット） ====== */
+  .cabinet {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+  }
+  .shelf {
+    position: relative;
+    padding: 80px 32px 24px;
+    margin-bottom: 64px;
+  }
+  /* 棚板 */
+  .shelf-board {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 28px;
+    background:
+      linear-gradient(180deg,
+        #7a4f2f 0%,
+        #5a3820 40%,
+        #3a2410 100%);
+    border-radius: 3px 3px 0 0;
+    box-shadow:
+      inset 0 2px 0 rgba(255, 200, 140, 0.15),
+      0 20px 30px -10px rgba(0,0,0,0.7);
+  }
+  .shelf-board::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 210, 150, 0.25) 20%,
+      rgba(255, 210, 150, 0.25) 80%,
+      transparent);
+  }
+  /* 木目 */
+  .shelf-board::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(90deg,
+        transparent 0px,
+        rgba(0,0,0,0.08) 2px,
+        transparent 4px,
+        transparent 60px,
+        rgba(0,0,0,0.12) 62px,
+        transparent 64px,
+        transparent 180px);
+    opacity: 0.6;
+  }
+
+  /* 背板の雰囲気 */
+  .shelf-back {
+    position: absolute;
+    inset: 0 0 28px 0;
+    background:
+      linear-gradient(180deg,
+        rgba(0,0,0,0.4) 0%,
+        rgba(0,0,0,0.15) 30%,
+        rgba(0,0,0,0.3) 100%),
+      repeating-linear-gradient(180deg,
+        transparent 0px,
+        transparent 90px,
+        rgba(0,0,0,0.1) 90px,
+        rgba(0,0,0,0.1) 91px);
+    border-radius: 2px;
+  }
+
+  .shelf-title {
+    position: absolute;
+    top: 24px; left: 50%;
+    transform: translateX(-50%);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 18px;
+    letter-spacing: 0.25em;
+    color: var(--brass);
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .shelf-title::before, .shelf-title::after {
+    content: '';
+    display: inline-block;
+    width: 40px; height: 1px;
+    background: var(--brass);
+    vertical-align: middle;
+    margin: 0 16px;
+    opacity: 0.6;
+  }
+
+  .cards-row {
+    display: flex;
+    gap: 18px;
+    justify-content: flex-start;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    position: relative;
+    padding-bottom: 4px;
+    min-height: 380px;
+  }
+
+  /* ====== カード（棚に立てかけ） ====== */
+  .card-slot {
+    position: relative;
+    width: 180px;
+    cursor: pointer;
+    transform-origin: bottom center;
+    transform: rotate(var(--tilt, 0deg)) translateY(0);
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), filter 0.3s;
+    animation: slotIn 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) backwards;
+  }
+  @keyframes slotIn {
+    from { opacity: 0; transform: rotate(var(--tilt, 0deg)) translateY(40px); }
+    to { opacity: 1; transform: rotate(var(--tilt, 0deg)) translateY(0); }
+  }
+  .card-slot:hover {
+    transform: rotate(0deg) translateY(-14px);
+    filter: brightness(1.1);
+    z-index: 10;
+  }
+
+  /* カード本体 */
+  .card-face {
+    width: 180px;
+    height: 252px; /* ポケカ比率 63:88 */
+    border-radius: 10px;
+    background: #222;
+    background-size: cover;
+    background-position: center;
+    box-shadow:
+      0 2px 0 rgba(255,255,255,0.15) inset,
+      0 -2px 0 rgba(0,0,0,0.3) inset,
+      0 18px 22px -8px rgba(0,0,0,0.8),
+      0 4px 0 rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  /* カード表面のつやっぽさ */
+  .card-face::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg,
+      transparent 30%,
+      rgba(255,255,255,0.1) 45%,
+      transparent 50%);
+    pointer-events: none;
+  }
+
+  .card-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 12px;
+    color: rgba(244, 234, 213, 0.5);
+    font-family: 'Shippori Mincho', serif;
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.5;
+    background: linear-gradient(135deg, #3a2a1a 0%, #5a3f28 100%);
+  }
+
+  /* 影（床に映る） */
+  .card-slot::before {
+    content: '';
+    position: absolute;
+    bottom: -8px; left: 10%;
+    width: 80%; height: 12px;
+    background: radial-gradient(ellipse, rgba(0,0,0,0.7), transparent 70%);
+    filter: blur(4px);
+    transition: all 0.3s;
+  }
+  .card-slot:hover::before {
+    bottom: -20px;
+    opacity: 0.5;
+  }
+
+  /* ====== PSA スラブ ====== */
+  .slab {
+    width: 180px;
+    position: relative;
+    padding: 6px;
+    background:
+      linear-gradient(135deg,
+        rgba(255,255,255,0.18) 0%,
+        rgba(255,255,255,0.05) 40%,
+        rgba(255,255,255,0.15) 100%);
+    border: 1.5px solid rgba(255,255,255,0.4);
+    border-radius: 6px;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.15) inset,
+      0 20px 30px -10px rgba(0,0,0,0.8);
+    backdrop-filter: blur(1px);
+  }
+  .slab::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 6px;
+    background: linear-gradient(105deg,
+      transparent 40%,
+      rgba(255,255,255,0.25) 50%,
+      transparent 60%);
+    pointer-events: none;
+  }
+
+  .slab-label {
+    background: var(--psa-red);
+    color: white;
+    padding: 8px 6px 6px;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+    border-radius: 3px 3px 0 0;
+    margin-bottom: 4px;
+    position: relative;
+  }
+  .slab-label.authentic { background: #666; }
+  .slab-label.low { background: #4a4a4a; }
+  .slab-label.mid { background: #b8860b; }
+  .slab-label.high { background: var(--psa-red); }
+  .slab-label.gem {
+    background: linear-gradient(135deg, #d4af37 0%, #f4d76e 50%, #b8860b 100%);
+    color: #2a1810;
+  }
+
+  .slab-label .psa-logo {
+    display: block;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    margin-bottom: 2px;
+    opacity: 0.95;
+  }
+  .slab-label .grade-text {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    opacity: 0.8;
+    margin-bottom: 1px;
+  }
+  .slab-label .grade-num {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.05em;
+  }
+
+  .slab-card-wrap {
+    border-radius: 4px;
+    overflow: hidden;
+    background: #1a1208;
+    position: relative;
+  }
+  .slab-card-wrap .card-face {
+    width: 100%;
+    height: 228px;
+    border-radius: 4px;
+    box-shadow: none;
+  }
+
+  .slab-footer {
+    margin-top: 4px;
+    padding: 4px 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: rgba(255,255,255,0.7);
+    text-align: center;
+    letter-spacing: 0.1em;
+    background: rgba(0,0,0,0.3);
+    border-radius: 2px;
+  }
+
+  /* ====== カード情報（下に） ====== */
+  .card-info {
+    margin-top: 12px;
+    text-align: center;
+  }
+  .card-info .name {
+    font-size: 12px;
+    color: var(--cream);
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .card-info .set {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--brass);
+    letter-spacing: 0.15em;
+    opacity: 0.7;
+  }
+
+  /* ====== 詳細モーダル ====== */
+  .modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.88);
+    backdrop-filter: blur(8px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .modal.open {
+    display: flex;
+    opacity: 1;
+  }
+
+  .modal-content {
+    max-width: 1000px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 48px;
+    align-items: center;
+    transform: scale(0.95);
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .modal.open .modal-content { transform: scale(1); }
+
+  @media (max-width: 768px) {
+    .modal-content {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
+
+  .modal-card-3d {
+    perspective: 1600px;
+    perspective-origin: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 500px;
+  }
+
+  .card-3d {
+    width: 320px;
+    height: 448px;
+    position: relative;
+    transform-style: preserve-3d;
+    transform: rotateY(0deg);
+    transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+    cursor: grab;
+  }
+  .card-3d.flipped { transform: rotateY(180deg); }
+  .card-3d.dragging { cursor: grabbing; transition: none; }
+
+  .card-3d-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    background-size: cover;
+    background-position: center;
+    background-color: #222;
+    box-shadow:
+      0 40px 60px -20px rgba(0,0,0,0.9),
+      0 0 0 1px rgba(255,255,255,0.08) inset;
+  }
+  .card-3d-face.back { transform: rotateY(180deg); }
+
+  /* ホログラム光沢 */
+  .card-3d-face::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    background: linear-gradient(
+      var(--shine-angle, 115deg),
+      transparent 35%,
+      rgba(255,255,255,0.35) 48%,
+      transparent 55%);
+    opacity: var(--shine-opacity, 0);
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    transition: opacity 0.3s;
+  }
+
+  /* スラブ版3D */
+  .slab-3d {
+    width: 340px;
+    padding: 10px;
+    background:
+      linear-gradient(135deg,
+        rgba(255,255,255,0.22) 0%,
+        rgba(255,255,255,0.08) 50%,
+        rgba(255,255,255,0.18) 100%);
+    border: 2px solid rgba(255,255,255,0.5);
+    border-radius: 10px;
+    box-shadow:
+      0 40px 60px -20px rgba(0,0,0,0.9),
+      0 0 30px rgba(255,255,255,0.1) inset;
+    transform-style: preserve-3d;
+    cursor: grab;
+  }
+  .slab-3d .slab-label {
+    padding: 12px 8px 10px;
+  }
+  .slab-3d .slab-label .psa-logo { font-size: 18px; }
+  .slab-3d .slab-label .grade-text { font-size: 11px; }
+  .slab-3d .slab-label .grade-num { font-size: 28px; }
+  .slab-3d .slab-card-wrap .card-face {
+    width: 100%;
+    height: 436px;
+    border-radius: 4px;
+  }
+  .slab-3d .slab-footer {
+    font-size: 10px;
+    padding: 6px 8px;
+  }
+
+  /* 詳細パネル */
+  .details {
+    color: var(--cream);
+    padding: 0 12px;
+  }
+  .details .category {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    letter-spacing: 0.25em;
+    color: var(--brass);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .details h2 {
+    font-family: 'Shippori Mincho', serif;
+    font-weight: 900;
+    font-size: clamp(24px, 3.5vw, 36px);
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+  .details-rows {
+    border-top: 1px solid rgba(200, 165, 88, 0.3);
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+  .details-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px dashed rgba(200, 165, 88, 0.15);
+    font-size: 14px;
+  }
+  .details-row .k {
+    color: rgba(244, 234, 213, 0.5);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    letter-spacing: 0.05em;
+  }
+  .details-row .v {
+    font-weight: 500;
+  }
+  .details-row .v.mono {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--brass);
+  }
+  .psa-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--psa-red);
+    color: white;
+    border-radius: 3px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+  }
+  .psa-badge.gem {
+    background: linear-gradient(135deg, #d4af37, #f4d76e);
+    color: #2a1810;
+  }
+  .notes {
+    margin-top: 24px;
+    padding: 16px;
+    background: rgba(244, 234, 213, 0.04);
+    border-left: 2px solid var(--brass);
+    font-size: 13px;
+    line-height: 1.8;
+    color: rgba(244, 234, 213, 0.8);
+  }
+
+  .modal-controls {
+    margin-top: 24px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    padding: 10px 20px;
+    background: transparent;
+    color: var(--cream);
+    border: 1px solid rgba(200, 165, 88, 0.4);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 14px;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.25s;
+    border-radius: 2px;
+  }
+  .btn:hover {
+    background: var(--brass);
+    color: var(--wood-dark);
+    border-color: var(--brass);
+  }
+
+  .close-btn {
+    position: fixed;
+    top: 24px; right: 24px;
+    width: 48px; height: 48px;
+    background: rgba(0,0,0,0.5);
+    color: var(--cream);
+    border: 1px solid rgba(200, 165, 88, 0.3);
+    font-size: 24px;
+    cursor: pointer;
+    border-radius: 50%;
+    z-index: 101;
+    transition: all 0.25s;
+  }
+  .close-btn:hover {
+    background: var(--brass);
+    color: var(--wood-dark);
+    transform: rotate(90deg);
+  }
+
+  /* ====== フッター ====== */
+  footer {
+    max-width: 1200px;
+    margin: 80px auto 0;
+    text-align: center;
+    padding: 32px 24px;
+    border-top: 1px solid rgba(200, 165, 88, 0.2);
+    position: relative;
+    z-index: 2;
+  }
+  footer p {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: rgba(244, 234, 213, 0.5);
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  footer .meta-info {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: rgba(200, 165, 88, 0.6);
+    letter-spacing: 0.2em;
+  }
+
+  /* ====== エラー / ローディング ====== */
+  .empty-state {
+    max-width: 500px;
+    margin: 80px auto;
+    text-align: center;
+    padding: 48px 32px;
+    border: 1px solid rgba(200, 165, 88, 0.2);
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+  }
+  .empty-state h3 {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--brass);
+    margin-bottom: 16px;
+  }
+  .empty-state p {
+    font-size: 14px;
+    line-height: 1.8;
+    color: rgba(244, 234, 213, 0.7);
+  }
+
+  .loading {
+    text-align: center;
+    padding: 120px 24px;
+    color: var(--brass);
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-size: 16px;
+    letter-spacing: 0.2em;
+  }
+  .loading::after {
+    content: '';
+    display: inline-block;
+    width: 40px; height: 1px;
+    background: var(--brass);
+    margin-left: 12px;
+    animation: loading 1.5s ease-in-out infinite;
+  }
+  @keyframes loading {
+    0%, 100% { transform: scaleX(0); }
+    50% { transform: scaleX(1); }
+  }
+
+  /* モバイル最適化 */
+  @media (max-width: 640px) {
+    .room { padding: 24px 12px 80px; }
+    .plate { padding: 16px 32px; }
+    .shelf { padding: 60px 12px 20px; }
+    .cards-row { gap: 12px; justify-content: center; }
+    .card-slot, .slab { width: 140px; }
+    .card-face { height: 196px; }
+    .slab-card-wrap .card-face { height: 176px; }
+    .shelf-title { font-size: 14px; }
+    .close-btn { top: 12px; right: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 浮遊する埃 -->
+<div class="dust" id="dust"></div>
+
+<div class="room">
+  <header>
+    <div class="brand">Shimo's Private Card Cabinet</div>
+    <div class="plate">
+      <span class="for">For</span>
+      <h1 id="owner-name">—</h1>
+    </div>
+    <p class="subtitle" id="collection-subtitle"></p>
+    <p class="welcome" id="welcome-message"></p>
+  </header>
+
+  <div class="toolbar" id="toolbar" style="display:none">
+    <button class="chip active" data-filter="all">すべて</button>
+    <button class="chip" data-filter="psa">PSA鑑定</button>
+    <button class="chip" data-filter="raw">生カード</button>
+    <div class="divider"></div>
+    <button class="chip" data-sort="added">追加順</button>
+    <button class="chip" data-sort="grade">グレード順</button>
+    <button class="chip" data-sort="name">名前順</button>
+    <div class="divider"></div>
+    <span class="count" id="count">— CARDS</span>
+  </div>
+
+  <div class="cabinet" id="cabinet">
+    <div class="loading">READING CABINET</div>
+  </div>
+
+  <footer>
+    <p id="footer-message">このキャビネットは Shimo によって管理されています</p>
+    <div class="meta-info" id="footer-meta">— / —</div>
+  </footer>
+</div>
+
+<!-- 詳細モーダル -->
+<div class="modal" id="modal">
+  <button class="close-btn" id="close-btn">✕</button>
+  <div class="modal-content" id="modal-content"></div>
+</div>
+
+<script>
+/* ==========================================================
+   Shimo's Card Cabinet — read-only viewer
+   データは data/{slug}.json から取得
+   URLハッシュで購入者を分岐: /#taro → data/taro.json
+   ========================================================== */
+
+// ====== デモ用埋め込みデータ（file://で開かれたとき用のフォールバック） ======
+const DEMO_DATA = {
+  owner: { name: "デモ様" },
+  collection: {
+    title: "DEMO COLLECTION",
+    welcome: "これはデモ表示です。購入者ごとの専用URLでご覧いただくと、あなた専用のコレクションが表示されます。",
+    updated_at: "2026-04-19"
+  },
+  cards: [
+    {
+      id: "demo-001",
+      name: "リザードンex SAR",
+      set: "SV1a",
+      number: "201/198",
+      rarity: "SAR",
+      front_image: "",
+      psa: { grade: 10, cert_number: "12345678", year: 2024 },
+      notes: "ポケモンカード151当選時に入手。センタリングほぼ完璧。",
+      acquired_at: "2024-06-15",
+      added_at: "2026-04-19"
+    },
+    {
+      id: "demo-002",
+      name: "ピカチュウ (プロモ)",
+      set: "プロモ",
+      number: "001/PROMO",
+      rarity: "PROMO",
+      front_image: "",
+      psa: { grade: 9, cert_number: "98765432", year: 2024 },
+      notes: "イベント配布品。",
+      acquired_at: "2024-03-01",
+      added_at: "2026-04-19"
+    },
+    {
+      id: "demo-003",
+      name: "ミュウツーV SA",
+      set: "S12a",
+      number: "220/172",
+      rarity: "SA",
+      front_image: "",
+      psa: null,
+      notes: "生カード。スリーブ+マグネットローダーで保管。",
+      acquired_at: "2023-11-10",
+      added_at: "2026-04-19"
+    },
+    {
+      id: "demo-004",
+      name: "カイリューV (SA)",
+      set: "S9",
+      number: "105/100",
+      rarity: "SA",
+      front_image: "",
+      psa: { grade: 10, cert_number: "55667788", year: 2024 },
+      notes: "PSA鑑定済。",
+      acquired_at: "2023-08-20",
+      added_at: "2026-04-19"
+    }
+  ]
+};
+
+// ====== 初期化 ======
+function initDust() {
+  const dust = document.getElementById('dust');
+  for (let i = 0; i < 30; i++) {
+    const s = document.createElement('span');
+    s.style.left = Math.random() * 100 + '%';
+    s.style.animationDelay = Math.random() * 18 + 's';
+    s.style.animationDuration = (12 + Math.random() * 10) + 's';
+    s.style.opacity = 0.3 + Math.random() * 0.5;
+    dust.appendChild(s);
+  }
+}
+
+// ====== データ取得 ======
+async function loadData() {
+  const slug = (location.hash.slice(1) || '').replace(/[^a-zA-Z0-9_-]/g, '');
+  if (!slug) {
+    return DEMO_DATA;
+  }
+  try {
+    const res = await fetch(`data/${slug}.json`, { cache: 'no-store' });
+    if (!res.ok) throw new Error('not found');
+    return await res.json();
+  } catch (e) {
+    return null; // エラー表示へ
+  }
+}
+
+// ====== レンダリング ======
+let currentData = null;
+let currentFilter = 'all';
+let currentSort = 'added';
+
+function render(data) {
+  currentData = data;
+
+  // オーナー情報
+  document.getElementById('owner-name').textContent = data.owner?.name || 'あなた';
+  document.getElementById('collection-subtitle').textContent = data.collection?.title || '';
+  document.getElementById('welcome-message').textContent = data.collection?.welcome || '';
+
+  // フッター
+  document.getElementById('footer-meta').textContent =
+    `UPDATED ${data.collection?.updated_at || '—'} · ${data.cards?.length || 0} CARDS`;
+
+  // ツールバー表示
+  document.getElementById('toolbar').style.display = 'flex';
+
+  renderCabinet();
+}
+
+function renderCabinet() {
+  const cabinet = document.getElementById('cabinet');
+  let cards = [...(currentData.cards || [])];
+
+  // フィルター
+  if (currentFilter === 'psa') cards = cards.filter(c => c.psa);
+  if (currentFilter === 'raw') cards = cards.filter(c => !c.psa);
+
+  // ソート
+  const sorters = {
+    added: (a, b) => (b.added_at || '').localeCompare(a.added_at || ''),
+    grade: (a, b) => (b.psa?.grade || 0) - (a.psa?.grade || 0),
+    name: (a, b) => (a.name || '').localeCompare(b.name || '', 'ja')
+  };
+  cards.sort(sorters[currentSort] || sorters.added);
+
+  // カウント更新
+  document.getElementById('count').textContent = `${cards.length} CARDS`;
+
+  if (cards.length === 0) {
+    cabinet.innerHTML = `
+      <div class="empty-state">
+        <h3>このキャビネットはまだ空です</h3>
+        <p>Shimo がカードを追加すると、ここに表示されます。<br>少しお待ちください。</p>
+      </div>
+    `;
+    return;
+  }
+
+  // 1段あたり最大枚数でチャンク分け
+  const PER_SHELF = 6;
+  const shelves = [];
+  for (let i = 0; i < cards.length; i += PER_SHELF) {
+    shelves.push(cards.slice(i, i + PER_SHELF));
+  }
+
+  cabinet.innerHTML = shelves.map((shelf, si) => `
+    <div class="shelf">
+      <div class="shelf-back"></div>
+      ${si === 0 ? '<div class="shelf-title">THE COLLECTION</div>' : ''}
+      <div class="cards-row">
+        ${shelf.map((card, ci) => renderCardSlot(card, si * PER_SHELF + ci)).join('')}
+      </div>
+      <div class="shelf-board"></div>
+    </div>
+  `).join('');
+
+  // クリックイベント
+  document.querySelectorAll('.card-slot').forEach(el => {
+    el.addEventListener('click', () => openModal(el.dataset.cardId));
+  });
+}
+
+function renderCardSlot(card, idx) {
+  // 立てかけ風の微小な傾き（乱数だが固定）
+  const tilts = [-2.5, 1.5, -1, 2, -1.8, 0.8, -2.2, 1.2];
+  const tilt = tilts[idx % tilts.length];
+
+  const frontStyle = card.front_image
+    ? `background-image: url('${card.front_image}');`
+    : '';
+
+  const cardHtml = card.front_image
+    ? `<div class="card-face" style="${frontStyle}"></div>`
+    : `<div class="card-face"><div class="card-placeholder">${escapeHtml(card.name || 'No image')}</div></div>`;
+
+  if (card.psa) {
+    const gradeClass = getGradeClass(card.psa.grade);
+    return `
+      <div class="card-slot" data-card-id="${escapeAttr(card.id)}" style="--tilt: ${tilt}deg;" tabindex="0">
+        <div class="slab">
+          <div class="slab-label ${gradeClass}">
+            <span class="psa-logo">PSA</span>
+            <div class="grade-text">${getGradeText(card.psa.grade)}</div>
+            <div class="grade-num">${card.psa.grade}</div>
+          </div>
+          <div class="slab-card-wrap">${cardHtml}</div>
+          <div class="slab-footer">CERT ${escapeHtml(card.psa.cert_number || '—')}</div>
+        </div>
+        <div class="card-info">
+          <div class="name">${escapeHtml(card.name || '')}</div>
+          <div class="set">${escapeHtml(card.set || '')} · ${escapeHtml(card.number || '')}</div>
+        </div>
+      </div>
+    `;
+  } else {
+    return `
+      <div class="card-slot" data-card-id="${escapeAttr(card.id)}" style="--tilt: ${tilt}deg;" tabindex="0">
+        ${cardHtml}
+        <div class="card-info">
+          <div class="name">${escapeHtml(card.name || '')}</div>
+          <div class="set">${escapeHtml(card.set || '')} · ${escapeHtml(card.number || '')}</div>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function getGradeClass(grade) {
+  if (grade >= 10) return 'gem';
+  if (grade >= 9) return 'high';
+  if (grade >= 7) return 'mid';
+  if (grade >= 4) return 'low';
+  return 'authentic';
+}
+
+function getGradeText(grade) {
+  if (grade >= 10) return 'GEM MINT';
+  if (grade >= 9) return 'MINT';
+  if (grade >= 8) return 'NM-MT';
+  if (grade >= 7) return 'NEAR MINT';
+  if (grade >= 6) return 'EX-MT';
+  if (grade >= 5) return 'EX';
+  return 'GRADED';
+}
+
+// ====== 詳細モーダル ======
+function openModal(cardId) {
+  const card = currentData.cards.find(c => c.id === cardId);
+  if (!card) return;
+
+  const modal = document.getElementById('modal');
+  const content = document.getElementById('modal-content');
+
+  const frontStyle = card.front_image
+    ? `background-image: url('${card.front_image}');`
+    : '';
+  const backStyle = card.back_image
+    ? `background-image: url('${card.back_image}');`
+    : `background: linear-gradient(135deg, #1a3a7a 0%, #0a1a4a 100%);`;
+
+  const cardFront = card.front_image
+    ? `<div class="card-3d-face front" style="${frontStyle}"></div>`
+    : `<div class="card-3d-face front"><div class="card-placeholder" style="height:100%;border-radius:16px;">${escapeHtml(card.name)}</div></div>`;
+
+  const card3dHtml = `
+    <div class="card-3d" id="card-3d">
+      ${cardFront}
+      <div class="card-3d-face back" style="${backStyle}"></div>
+    </div>
+  `;
+
+  const visualHtml = card.psa ? `
+    <div class="modal-card-3d">
+      <div class="slab-3d">
+        <div class="slab-label ${getGradeClass(card.psa.grade)}">
+          <span class="psa-logo">PSA</span>
+          <div class="grade-text">${getGradeText(card.psa.grade)}</div>
+          <div class="grade-num">${card.psa.grade}</div>
+        </div>
+        <div class="slab-card-wrap">${card3dHtml.replace('card-3d', 'card-3d slab-inner')}</div>
+        <div class="slab-footer">CERT ${escapeHtml(card.psa.cert_number || '—')} · ${card.psa.year || ''}</div>
+      </div>
+    </div>
+  ` : `
+    <div class="modal-card-3d">${card3dHtml}</div>
+  `;
+
+  content.innerHTML = `
+    ${visualHtml}
+    <div class="details">
+      <div class="category">${escapeHtml(card.rarity || 'CARD')} · ${escapeHtml(card.set || '')}</div>
+      <h2>${escapeHtml(card.name)}</h2>
+      <div class="details-rows">
+        ${card.number ? `<div class="details-row"><span class="k">Number</span><span class="v mono">${escapeHtml(card.number)}</span></div>` : ''}
+        ${card.set ? `<div class="details-row"><span class="k">Set</span><span class="v">${escapeHtml(card.set)}</span></div>` : ''}
+        ${card.rarity ? `<div class="details-row"><span class="k">Rarity</span><span class="v mono">${escapeHtml(card.rarity)}</span></div>` : ''}
+        ${card.acquired_at ? `<div class="details-row"><span class="k">Acquired</span><span class="v mono">${escapeHtml(card.acquired_at)}</span></div>` : ''}
+        ${card.psa ? `
+          <div class="details-row"><span class="k">PSA Grade</span><span class="v"><span class="psa-badge ${getGradeClass(card.psa.grade)}">${card.psa.grade} ${getGradeText(card.psa.grade)}</span></span></div>
+          <div class="details-row"><span class="k">Cert #</span><span class="v mono">${escapeHtml(card.psa.cert_number || '—')}</span></div>
+          ${card.psa.year ? `<div class="details-row"><span class="k">Graded Year</span><span class="v mono">${card.psa.year}</span></div>` : ''}
+        ` : `
+          <div class="details-row"><span class="k">Condition</span><span class="v">生カード (未鑑定)</span></div>
+        `}
+      </div>
+      ${card.notes ? `<div class="notes">${escapeHtml(card.notes)}</div>` : ''}
+      <div class="modal-controls">
+        ${card.back_image ? '<button class="btn" id="flip-btn">裏面を見る</button>' : ''}
+      </div>
+    </div>
+  `;
+
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  // 3Dカードインタラクション
+  attachCard3DInteraction();
+
+  // 裏面ボタン
+  const flipBtn = document.getElementById('flip-btn');
+  if (flipBtn) {
+    flipBtn.addEventListener('click', () => {
+      const card3d = document.querySelector('.card-3d');
+      card3d.classList.toggle('flipped');
+      flipBtn.textContent = card3d.classList.contains('flipped') ? '表面を見る' : '裏面を見る';
+    });
+  }
+}
+
+function attachCard3DInteraction() {
+  const card = document.querySelector('.card-3d');
+  if (!card) return;
+
+  let isDragging = false;
+  let startX = 0, startY = 0;
+  let currentRotY = 0, currentRotX = 0;
+  let baseRotY = card.classList.contains('flipped') ? 180 : 0;
+
+  function setTransform(rx, ry, shineAngle) {
+    card.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg)`;
+    const faces = card.querySelectorAll('.card-3d-face');
+    faces.forEach(f => {
+      f.style.setProperty('--shine-angle', (shineAngle || 115) + 'deg');
+      f.style.setProperty('--shine-opacity', '1');
+    });
+  }
+
+  // マウス追従
+  card.addEventListener('mousemove', (e) => {
+    if (isDragging) return;
+    const rect = card.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = (e.clientX - cx) / rect.width;
+    const dy = (e.clientY - cy) / rect.height;
+    const ry = baseRotY + dx * 25;
+    const rx = -dy * 18;
+    const shineAngle = 115 + dx * 60;
+    setTransform(rx, ry, shineAngle);
+  });
+
+  card.addEventListener('mouseleave', () => {
+    if (isDragging) return;
+    card.style.transform = `rotateY(${baseRotY}deg)`;
+    card.querySelectorAll('.card-3d-face').forEach(f => {
+      f.style.setProperty('--shine-opacity', '0');
+    });
+  });
+
+  // タッチ対応
+  card.addEventListener('touchstart', (e) => {
+    isDragging = true;
+    startX = e.touches[0].clientX;
+    card.classList.add('dragging');
+  });
+  card.addEventListener('touchmove', (e) => {
+    if (!isDragging) return;
+    const dx = e.touches[0].clientX - startX;
+    const ry = baseRotY + dx * 0.5;
+    setTransform(0, ry, 115 + dx * 0.3);
+  });
+  card.addEventListener('touchend', () => {
+    isDragging = false;
+    card.classList.remove('dragging');
+    // スナップ
+    const current = card.style.transform.match(/rotateY\((-?\d+\.?\d*)deg\)/);
+    if (current) {
+      const y = parseFloat(current[1]);
+      baseRotY = Math.abs((y % 360) - 180) < 90 ? 180 : 0;
+      if (baseRotY === 180) card.classList.add('flipped');
+      else card.classList.remove('flipped');
+      card.style.transform = `rotateY(${baseRotY}deg)`;
+    }
+  });
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+// ====== ユーティリティ ======
+function escapeHtml(str) {
+  if (str === null || str === undefined) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+function escapeAttr(str) { return escapeHtml(str); }
+
+// ====== イベント ======
+document.addEventListener('DOMContentLoaded', async () => {
+  initDust();
+  const data = await loadData();
+  if (data === null) {
+    document.getElementById('cabinet').innerHTML = `
+      <div class="empty-state">
+        <h3>Cabinet Not Found</h3>
+        <p>このURLに対応するキャビネットが見つかりませんでした。<br>メルカリ取引メッセージでお送りしたURLをもう一度ご確認ください。</p>
+      </div>
+    `;
+    return;
+  }
+  render(data);
+});
+
+// フィルター/ソート
+document.querySelectorAll('.chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    if (chip.dataset.filter) {
+      document.querySelectorAll('[data-filter]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentFilter = chip.dataset.filter;
+    }
+    if (chip.dataset.sort) {
+      document.querySelectorAll('[data-sort]').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      currentSort = chip.dataset.sort;
+    }
+    if (currentData) renderCabinet();
+  });
+});
+
+// モーダル閉じる
+document.getElementById('close-btn').addEventListener('click', closeModal);
+document.getElementById('modal').addEventListener('click', (e) => {
+  if (e.target.id === 'modal') closeModal();
+});
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeModal();
+});
+
+// ハッシュ変更で切り替え（複数購入者の切替デバッグ用）
+window.addEventListener('hashchange', async () => {
+  const data = await loadData();
+  if (data) render(data);
+});
+</script>
+</body>
+</html>
