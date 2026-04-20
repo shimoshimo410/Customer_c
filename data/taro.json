@@ -40,16 +40,14 @@
     },
     {
       "id": "taro-003",
-      "name": "ピカチュウ プロモ",
+      "name": "ペパー",
       "set": "プロモ",
       "number": "208/S-P",
       "rarity": "PROMO",
+      "front_image": "images/20260419_152700.jpg",
+      "back_image": "images/20260419_152653.jpg",
       "front_image": "",
-      "psa": {
-        "grade": 9,
-        "cert_number": "11223344",
-        "year": 2025
-      },
+      "psa": null,
       "notes": "",
       "acquired_at": "2026-04-18",
       "added_at": "2026-04-19"
