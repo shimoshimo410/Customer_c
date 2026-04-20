@@ -10,12 +10,12 @@
   "cards": [
     {
       "id": "taro-001",
-      "name": "リザードンex SAR",
+      "name": "サケブシッポ AR",
       "set": "SV2a ポケモンカード151",
       "number": "201/198",
       "rarity": "SAR",
       "front_image": "images/20260419_155208.jpg",
-      "back_image": "",
+      "back_image": "images/20260419_155219.jpg",
       "psa": {
         "grade": 10,
         "cert_number": "87654321",
