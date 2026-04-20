@@ -9,28 +9,34 @@
   },
   "cards": [
     {
-      "id": "demo-001",
-      "name": "リザードンex SAR",
-      "set": "SV1a",
+      "id": "taro-001",
+      "name": "サケブシッポ AR",
+      "set": "SV2a ポケモンカード151",
       "number": "201/198",
-      "rarity": "SAR",
-      "front_image": "",
-      "psa": { "grade": 10, "cert_number": "12345678", "year": 2024 },
-      "notes": "デモ用ダミーデータ",
-      "acquired_at": "2024-06-15",
-      "added_at": "2026-04-19"
+      "rarity": "AR",
+      "front_image": "images/20260419_155208.jpg",
+      "back_image": "images/20260419_155219.jpg",
+      "psa": {
+        "grade": 10,
+        "cert_number": "87654321",
+        "year": 2024
+      },
+      "notes": "2025年12月にお取引。センタリング・コーナー・エッジいずれも良好。スリーブ+マグネットローダー+二重梱包でお送りしました。",
+      "acquired_at": "2025-12-01",
+      "added_at": "2025-12-03"
     },
     {
-      "id": "demo-002",
-      "name": "ピカチュウ プロモ",
-      "set": "プロモ",
-      "number": "001/PROMO",
-      "rarity": "PROMO",
-      "front_image": "",
-      "psa": { "grade": 9, "cert_number": "98765432", "year": 2024 },
-      "notes": "デモ用ダミーデータ",
-      "acquired_at": "2024-03-01",
-      "added_at": "2026-04-19"
+      "id": "taro-002",
+      "name": "ミモザ SAR",
+      "set": "SV1a トリプレットビート",
+      "number": "096/073",
+      "rarity": "SAR",
+      "front_image": "images/20260419_185143_3.jpg",
+      "back_image": "images/20260419_185202_2.jpg",
+      "psa": null,
+      "notes": "生カードでお送りしました。スリーブ・マグネットローダー付き。",
+      "acquired_at": "2026-02-14",
+      "added_at": "2026-02-15"
     },
     {
       "id": "demo-003",
